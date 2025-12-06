@@ -163,11 +163,11 @@ function App() {
           </header>
 
           <main>
-            {(selectedCategory === 'All' || selectedCategory === 'Semantic') && (
-              <TokenSection title="Semantic Colors" tokens={filteredSemanticTokens} colorMode={colorMode} />
-            )}
             {(selectedCategory === 'All' || selectedCategory === 'Global') && (
               <TokenSection title="Global Colors" tokens={filteredGlobalTokens} colorMode={colorMode} />
+            )}
+            {(selectedCategory === 'All' || selectedCategory === 'Semantic') && (
+              <TokenSection title="Semantic Colors" tokens={filteredSemanticTokens} colorMode={colorMode} />
             )}
             {(selectedCategory === 'All' || selectedCategory === 'Text') && (
               <TokenSection title="Text Colors" tokens={filteredTextTokens} colorMode={colorMode} />
