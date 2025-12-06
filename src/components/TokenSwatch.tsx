@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { resolveToken } from '../data/spectrum2ColorTokens';
+import { useToast } from './ToastContext';
 
 interface TokenSwatchProps {
   tokenName: string;
@@ -10,6 +11,7 @@ export function TokenSwatch({ tokenName, colorMode = 'light' }: TokenSwatchProps
   const [colorValue, setColorValue] = useState<string>('');
   const [hexDisplay, setHexDisplay] = useState<string>('...');
   const [resolvedName, setResolvedName] = useState<string>('');
+  const { showToast } = useToast();
 
   useEffect(() => {
     const resolution = resolveToken(tokenName, colorMode);
@@ -42,6 +44,8 @@ export function TokenSwatch({ tokenName, colorMode = 'light' }: TokenSwatchProps
     if (colorValue) {
       const valToCopy = hexDisplay !== 'N/A' && hexDisplay.startsWith('#') ? hexDisplay : colorValue;
       navigator.clipboard.writeText(valToCopy);
+      
+      showToast(`Copied ${valToCopy} to clipboard`);
       
       const element = document.activeElement as HTMLElement;
       if (element) element.blur();

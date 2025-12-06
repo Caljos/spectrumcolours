@@ -26,6 +26,20 @@ export const graySteps = [50, ...colorSteps];
 
 export type ColorScale = typeof globalColors[number];
 
+export const semanticColors = [
+  'accent',
+  'informative',
+  'negative',
+  'notice',
+  'positive'
+] as const;
+
+export const semanticSteps = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000] as const;
+
+// Note: Some semantic scales might have more steps (like negative going to 1600), 
+// but we'll start with the standard range typically available in the main system aliases
+// and can expand if specific ones are missing from our spectrum2Tokens definition.
+
 export const textColors = [
   'text-neutral',
   'text-neutral-subdued',
