@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from './ToastContext';
+import { getSizeValue } from '../data/spectrum2TypographySizeTokens';
 
 interface SizeSwatchProps {
   tokenName: string;
@@ -8,28 +9,13 @@ interface SizeSwatchProps {
 
 export function SizeSwatch({ tokenName, category }: SizeSwatchProps) {
   const [value, setValue] = useState<string>('');
-  const elementRef = useRef<HTMLDivElement>(null);
   const { showToast } = useToast();
 
   useEffect(() => {
-    if (elementRef.current) {
-      const computed = window.getComputedStyle(elementRef.current);
-      let val = '';
-      
-      switch (category) {
-        case 'scale':
-          val = computed.width; // Assuming width = height for size tokens
-          break;
-        case 'borderRadius':
-          val = computed.borderRadius;
-          break;
-        case 'borderWidth':
-          val = computed.borderWidth;
-          break;
-      }
-      setValue(val);
-    }
-  }, [tokenName, category]);
+    // Use the static value map
+    const val = getSizeValue(tokenName);
+    setValue(val);
+  }, [tokenName]);
 
   const handleCopy = () => {
     const valToCopy = value || `var(--s2-${tokenName})`;
@@ -46,8 +32,8 @@ export function SizeSwatch({ tokenName, category }: SizeSwatchProps) {
     if (category === 'scale') {
       return {
         ...baseStyle,
-        width: `var(--s2-${tokenName})`,
-        height: `var(--s2-${tokenName})`,
+        width: value || '0px',
+        height: value || '0px',
         minWidth: '2px',
         minHeight: '2px',
       };
@@ -58,7 +44,7 @@ export function SizeSwatch({ tokenName, category }: SizeSwatchProps) {
         ...baseStyle,
         width: '64px',
         height: '64px',
-        borderRadius: `var(--s2-${tokenName})`,
+        borderRadius: value || '0px',
         border: '2px solid #005aa3',
         backgroundColor: '#e6f2ff',
       };
@@ -71,7 +57,7 @@ export function SizeSwatch({ tokenName, category }: SizeSwatchProps) {
           backgroundColor: '#fff',
           borderStyle: 'solid',
           borderColor: '#0070f3',
-          borderWidth: `var(--s2-${tokenName})`,
+          borderWidth: value || '0px',
         };
       }
 
@@ -100,16 +86,15 @@ export function SizeSwatch({ tokenName, category }: SizeSwatchProps) {
         }}
         title={`Click to copy ${tokenName}`}
       >
-        <div ref={elementRef} style={getPreviewStyle()} />
+        <div style={getPreviewStyle()} />
       </div>
       <div style={{ marginTop: '8px', fontSize: '12px', fontWeight: '600', textAlign: 'center', wordBreak: 'break-word', maxWidth: '100px' }}>
         {tokenName}
       </div>
       
       <div style={{ fontSize: '11px', color: '#666', fontFamily: 'monospace', height: '1.5em', marginTop: '2px' }}>
-        {value}
+        {value || 'N/A'}
       </div>
     </div>
   );
 }
-

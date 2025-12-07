@@ -118,7 +118,7 @@ function App() {
     setColorMode(prev => prev === 'light' ? 'dark' : 'light');
   };
 
-  const categories: Category[] = ['All', 'Global', 'Semantic', 'Typography', 'Size', 'Text', 'Background', 'Border', 'Fill'];
+  const categories: Category[] = ['All', 'Global', 'Semantic', 'Text', 'Background', 'Border', 'Fill', 'Typography', 'Size'];
 
   return (
     <ToastProvider>

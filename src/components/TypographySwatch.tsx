@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from './ToastContext';
+import { getTypographyValue } from '../data/spectrum2TypographySizeTokens';
 
 interface TypographySwatchProps {
   tokenName: string;
@@ -8,33 +9,16 @@ interface TypographySwatchProps {
 
 export function TypographySwatch({ tokenName, category }: TypographySwatchProps) {
   const [value, setValue] = useState<string>('');
-  const elementRef = useRef<HTMLDivElement>(null);
   const { showToast } = useToast();
 
   useEffect(() => {
-    if (elementRef.current) {
-      const computed = window.getComputedStyle(elementRef.current);
-      let val = '';
-      
-      switch (category) {
-        case 'fontFamily':
-          val = computed.fontFamily;
-          break;
-        case 'fontWeight':
-          val = computed.fontWeight;
-          break;
-        case 'fontSize':
-          val = computed.fontSize;
-          break;
-        case 'lineHeight':
-          val = computed.lineHeight;
-          break;
-      }
-      setValue(val);
-    }
-  }, [tokenName, category]);
+    // Use the static value map
+    const val = getTypographyValue(tokenName);
+    setValue(val);
+  }, [tokenName]);
 
   const handleCopy = () => {
+    // Copy the actual value if available, else the variable
     const valToCopy = value || `var(--s2-${tokenName})`;
     navigator.clipboard.writeText(valToCopy);
     showToast(`Copied ${valToCopy} to clipboard!`);
@@ -51,16 +35,16 @@ export function TypographySwatch({ tokenName, category }: TypographySwatchProps)
   };
 
   const styles: React.CSSProperties = {
-    fontFamily: category === 'fontFamily' ? `var(--s2-${tokenName})` : 'var(--s2-font-family-sans, sans-serif)',
-    fontWeight: category === 'fontWeight' ? `var(--s2-${tokenName})` : 'normal',
-    fontSize: category === 'fontSize' ? `var(--s2-${tokenName})` : '24px',
-    lineHeight: category === 'lineHeight' ? `var(--s2-${tokenName})` : '1.5',
-    // Apply token if it matches the category, otherwise default
+    // Use the resolved value directly for the preview style
+    fontFamily: category === 'fontFamily' ? value : 'var(--s2-font-family-sans, sans-serif)',
+    fontWeight: category === 'fontWeight' ? value : 'normal',
+    fontSize: category === 'fontSize' ? value : '24px',
+    lineHeight: category === 'lineHeight' ? value : '1.5',
   };
 
   // For specific rendering tweaks
   if (category === 'fontSize') {
-      styles.fontSize = `var(--s2-${tokenName})`;
+      styles.fontSize = value; // Use value
       styles.lineHeight = '1.2';
   }
 
@@ -84,7 +68,6 @@ export function TypographySwatch({ tokenName, category }: TypographySwatchProps)
           color: '#333',
           ...styles
         }}
-        ref={elementRef}
         title={`Click to copy ${tokenName}`}
       >
         <span style={{ 
@@ -103,9 +86,8 @@ export function TypographySwatch({ tokenName, category }: TypographySwatchProps)
       </div>
       
       <div style={{ fontSize: '11px', color: '#666', fontFamily: 'monospace', height: '1.5em', marginTop: '2px' }}>
-        {value}
+        {value || 'N/A'}
       </div>
     </div>
   );
 }
-
