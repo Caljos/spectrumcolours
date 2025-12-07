@@ -3,12 +3,15 @@ import { Provider } from '@react-spectrum/s2';
 import { 
   globalColors, colorSteps, graySteps, 
   semanticColors, semanticSteps,
-  textColors, backgroundColors, borderColors, fillColors 
+  textColors, backgroundColors, borderColors, fillColors,
+  typographyTokens, sizeTokens
 } from './data/tokens';
 import { TokenSection } from './components/TokenSection';
+import { TypographySection } from './components/TypographySection';
+import { SizeSection } from './components/SizeSection';
 import { ToastProvider } from './components/ToastContext';
 
-type Category = 'All' | 'Global' | 'Semantic' | 'Text' | 'Background' | 'Border' | 'Fill';
+type Category = 'All' | 'Global' | 'Semantic' | 'Typography' | 'Size' | 'Text' | 'Background' | 'Border' | 'Fill';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -38,47 +41,84 @@ function App() {
     return tokens;
   }, []);
 
+  // Helper for filtering
+  const filterTokens = (tokens: string[]) => {
+    if (!searchTerm) return tokens;
+    return tokens.filter(t => t.toLowerCase().includes(searchTerm.toLowerCase()));
+  };
+
   const filteredGlobalTokens = useMemo(() => {
     if (selectedCategory !== 'All' && selectedCategory !== 'Global') return [];
-    const filtered = searchTerm ? globalTokens.filter(t => t.toLowerCase().includes(searchTerm.toLowerCase())) : globalTokens;
-    return filtered;
+    return filterTokens(globalTokens);
   }, [globalTokens, searchTerm, selectedCategory]);
 
   const filteredSemanticTokens = useMemo(() => {
     if (selectedCategory !== 'All' && selectedCategory !== 'Semantic') return [];
-    const filtered = searchTerm ? semanticTokens.filter(t => t.toLowerCase().includes(searchTerm.toLowerCase())) : semanticTokens;
-    return filtered;
+    return filterTokens(semanticTokens);
   }, [semanticTokens, searchTerm, selectedCategory]);
 
   const filteredTextTokens = useMemo(() => {
     if (selectedCategory !== 'All' && selectedCategory !== 'Text') return [];
-    const filtered = searchTerm ? textColors.filter(t => t.toLowerCase().includes(searchTerm.toLowerCase())) : textColors;
-    return filtered;
+    return filterTokens(textColors);
   }, [searchTerm, selectedCategory]);
 
   const filteredBackgroundTokens = useMemo(() => {
     if (selectedCategory !== 'All' && selectedCategory !== 'Background') return [];
-    const filtered = searchTerm ? backgroundColors.filter(t => t.toLowerCase().includes(searchTerm.toLowerCase())) : backgroundColors;
-    return filtered;
+    return filterTokens(backgroundColors);
   }, [searchTerm, selectedCategory]);
 
   const filteredBorderTokens = useMemo(() => {
     if (selectedCategory !== 'All' && selectedCategory !== 'Border') return [];
-    const filtered = searchTerm ? borderColors.filter(t => t.toLowerCase().includes(searchTerm.toLowerCase())) : borderColors;
-    return filtered;
+    return filterTokens(borderColors);
   }, [searchTerm, selectedCategory]);
 
   const filteredFillTokens = useMemo(() => {
     if (selectedCategory !== 'All' && selectedCategory !== 'Fill') return [];
-    const filtered = searchTerm ? fillColors.filter(t => t.toLowerCase().includes(searchTerm.toLowerCase())) : fillColors;
-    return filtered;
+    return filterTokens(fillColors);
   }, [searchTerm, selectedCategory]);
+
+  // Typography Filtering
+  const filteredFontFamilyTokens = useMemo(() => {
+    if (selectedCategory !== 'All' && selectedCategory !== 'Typography') return [];
+    return filterTokens(typographyTokens.fontFamily);
+  }, [searchTerm, selectedCategory]);
+
+  const filteredFontWeightTokens = useMemo(() => {
+    if (selectedCategory !== 'All' && selectedCategory !== 'Typography') return [];
+    return filterTokens(typographyTokens.fontWeight);
+  }, [searchTerm, selectedCategory]);
+
+  const filteredFontSizeTokens = useMemo(() => {
+    if (selectedCategory !== 'All' && selectedCategory !== 'Typography') return [];
+    return filterTokens(typographyTokens.fontSize);
+  }, [searchTerm, selectedCategory]);
+
+  const filteredLineHeightTokens = useMemo(() => {
+    if (selectedCategory !== 'All' && selectedCategory !== 'Typography') return [];
+    return filterTokens(typographyTokens.lineHeight);
+  }, [searchTerm, selectedCategory]);
+
+  // Size Filtering
+  const filteredSizeScaleTokens = useMemo(() => {
+    if (selectedCategory !== 'All' && selectedCategory !== 'Size') return [];
+    return filterTokens(sizeTokens.scale);
+  }, [searchTerm, selectedCategory]);
+
+  const filteredBorderRadiusTokens = useMemo(() => {
+    if (selectedCategory !== 'All' && selectedCategory !== 'Size') return [];
+    return filterTokens(sizeTokens.borderRadius);
+  }, [searchTerm, selectedCategory]);
+
+  const filteredBorderWidthTokens = useMemo(() => {
+      if (selectedCategory !== 'All' && selectedCategory !== 'Size') return [];
+      return filterTokens(sizeTokens.borderWidth);
+    }, [searchTerm, selectedCategory]);
 
   const toggleColorMode = () => {
     setColorMode(prev => prev === 'light' ? 'dark' : 'light');
   };
 
-  const categories: Category[] = ['All', 'Global', 'Semantic', 'Text', 'Background', 'Border', 'Fill'];
+  const categories: Category[] = ['All', 'Global', 'Semantic', 'Typography', 'Size', 'Text', 'Background', 'Border', 'Fill'];
 
   return (
     <ToastProvider>
@@ -118,7 +158,7 @@ function App() {
               <div style={{ flex: 1, minWidth: '280px' }}>
                 <input 
                   type="text" 
-                  placeholder="Search tokens (e.g., blue, 500)..." 
+                  placeholder="Search tokens (e.g., blue, 500, font)..." 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   style={{
@@ -163,6 +203,7 @@ function App() {
           </header>
 
           <main>
+            {/* Color Sections */}
             {(selectedCategory === 'All' || selectedCategory === 'Global') && (
               <TokenSection title="Global Colors" tokens={filteredGlobalTokens} colorMode={colorMode} />
             )}
@@ -180,6 +221,25 @@ function App() {
             )}
             {(selectedCategory === 'All' || selectedCategory === 'Fill') && (
               <TokenSection title="Fill Colors" tokens={filteredFillTokens} colorMode={colorMode} />
+            )}
+
+            {/* Typography Sections */}
+            {(selectedCategory === 'All' || selectedCategory === 'Typography') && (
+              <>
+                <TypographySection title="Font Families" tokens={filteredFontFamilyTokens} category="fontFamily" />
+                <TypographySection title="Font Weights" tokens={filteredFontWeightTokens} category="fontWeight" />
+                <TypographySection title="Font Sizes" tokens={filteredFontSizeTokens} category="fontSize" />
+                <TypographySection title="Line Heights" tokens={filteredLineHeightTokens} category="lineHeight" />
+              </>
+            )}
+
+            {/* Size Sections */}
+            {(selectedCategory === 'All' || selectedCategory === 'Size') && (
+              <>
+                <SizeSection title="Dimensions & Spacing" tokens={filteredSizeScaleTokens} category="scale" />
+                <SizeSection title="Border Radius" tokens={filteredBorderRadiusTokens} category="borderRadius" />
+                <SizeSection title="Border Width" tokens={filteredBorderWidthTokens} category="borderWidth" />
+              </>
             )}
           </main>
 
